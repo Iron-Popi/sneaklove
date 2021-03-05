@@ -27,4 +27,31 @@ router.post("/prod-add", async (req, res, next) => {
       }
 });
 
+
+router.get("/one-product/:id", (req, res, next) => {
+    SneakerModel.findById(req.params.id)
+    .then((sneaker) => res.render("one_product", { sneaker }))
+    .catch(next);
+});
+
+
+router.get("/prod-edit/:id", (req, res, next) => {
+    SneakerModel.findById(req.params.id)
+    .then((sneaker) => res.render("product_edit", { sneaker }))
+    .catch(next);
+});
+
+router.post("/prod-edit/:id", (req, res, next) => {
+    const { name, ref, size, description, price, category, id_tags } = req.body;
+    SneakerModel.findByIdAndUpdate(req.params.id,req.body)
+    .then(() => res.redirect("/sneakers/collection"))
+    .catch(next);
+});
+
+router.get("/delete/:id", (req, res, next) => {
+    SneakerModel.findByIdAndDelete(req.params.id)
+    .then(() => res.redirect("/sneakers/collection"))
+    .catch(next);
+});
+
 module.exports = router;
