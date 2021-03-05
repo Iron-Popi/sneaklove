@@ -28,6 +28,8 @@ router.post("/prod-add", async (req, res, next) => {
 });
 
 
+
+
 router.get("/one-product/:id", (req, res, next) => {
     SneakerModel.findById(req.params.id)
     .then((sneaker) => res.render("one_product", { sneaker }))
@@ -53,5 +55,8 @@ router.get("/delete/:id", (req, res, next) => {
     .then(() => res.redirect("/sneakers/collection"))
     .catch(next);
 });
+
+
+
 
 module.exports = router;
