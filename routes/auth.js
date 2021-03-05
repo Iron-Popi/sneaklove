@@ -8,63 +8,37 @@ router.get("/signin", (req, res) => {
     res.render("signin");
 });
 
-router.post("/signin", (req, res, next) => {
-    const { email, password } = req.body;
-    UserModel.findOne({ email: email })
-    .then(foundUser => {
-      if (!foundUser) {
-        req.flash("error", "Invalid credentials");
-        res.redirect("/signin");
-      } else {
+router.post("/signin", async ( req, res, next) => {
+    console.log(req.body);
+    try { 
+        const { email, password } = req.body;
+    const foundUser = await UserModel.findOne({email : email});
+    if(!foundUser) {
+        res.redirect("/signin")
+    } else {
         const isSamePassword = bcrypt.compareSync(password, foundUser.password);
-        if (!isSamePassword) {
-          req.flash("error", "Invalid credentials");
-          res.redirect("/signin");
+
+        if(!isSamePassword) {
+            res.redirect("/signin")
         } else {
-          const userObject = foundUser.toObject();
-          delete userObject.password;
-  
-          req.session.currentUser = userObject;
-  
-          req.flash("success", "Successfully logged in...");
-          res.redirect("/");
+            const userObject = foundUser.toObject();
+            delete userObject.password;
+
+            req.session.currentUser = userObject;
+
+            res.redirect("/")
         }
-      }
-    })
-    .catch(next);
-  });
-
-
-// router.post("/signin", async (res, req, next) => {
-//     console.log(req.body);
-//     try { 
-//         const { email, password } = req.body;
-//     const foundUser = await UserModel.findOne({email : email});
-//     if(!foundUser) {
-//         res.redirect("/signin")
-//     } else {
-//         const isSamePassword = bcrypt.compareSync(password, foundUser.password);
-
-//         if(!isSamePassword) {
-//             res.redirect("/signin")
-//         } else {
-//             const userObject = foundUser.toObject();
-//             delete userObject.password;
-
-//             req.session.currentUser = userObject;
-
-//             res.redirect("/")
-//         }
-//     }} catch (err) {
-//         next(err);
-//     }
-// });
+    }} catch (err) {
+        next(err);
+    }
+    // res.send("bizarre")
+});
 
 router.get("/signup", (req, res) => {
     res.render("signup");
 });
 
-router.post("/signup", async (req, res, next) => {
+router.post("/signup", async ( req, res,  next) => {
     try {
         const newUser = { ...req.body };
         const foundUser = await UserModel.findOne({email: newUser.email});
