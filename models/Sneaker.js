@@ -12,7 +12,7 @@ const sneakerModel = new Schema({
     type: String,
     enum: ["men", "women", "kids"]
   },
-  tags: {
+  id_tags: {
     type: Schema.Types.ObjectId,
     ref: "tags"
   }
