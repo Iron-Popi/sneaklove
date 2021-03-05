@@ -9,9 +9,9 @@ router.get("/signin", (req, res) => {
 });
 
 router.post("/signin", async (res, req, next) => {
-    const {email, password} = req.body;
+    console.log(req.body);
+    try { const { email, password } = req.body;
     const foundUser = await UserModel.findOne({email : email});
-
     if(!foundUser) {
         res.redirect("/signin")
     } else {
@@ -27,12 +27,41 @@ router.post("/signin", async (res, req, next) => {
 
             res.redirect("/")
         }
+    }} catch (err) {
+        next(err);
     }
 });
 
 router.get("/signup", (req, res) => {
     res.render("signup");
 });
+
+router.post("/signup", async (req, res, next) => {
+    try {
+        const newUser = { ...req.body };
+        const foundUser = await UserModel.findOne({email: newUser.email});
+
+        if(foundUser) {
+            res.redirect("/signin");
+            console.log("Already registered");
+        } else {
+            const hashedPassword = bcrypt.hashSync(newUser.password, 10);
+            newUser.password = hashedPassword;
+
+            await UserModel.create(newUser);
+            res.redirect("/signin")
+            console.log("success");
+        }
+    } catch(err) {
+        next(err)
+    }
+})
+
+router.get("/signout", (req,res,next) => {
+    req.session.destroy(function (err) {
+     res.redirect("/")
+    })
+})
 
 
 
