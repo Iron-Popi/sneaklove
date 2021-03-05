@@ -10,11 +10,7 @@ console.log(`\n\n
 );
 
 router.get("/", (req, res) => {
-  res.send("foo");
-});
-
-router.get("/sneakers/:cat", (req, res) => {
-  res.send("bar");
+  res.render("index");
 });
 
 router.get("/one-product/:id", (req, res) => {
